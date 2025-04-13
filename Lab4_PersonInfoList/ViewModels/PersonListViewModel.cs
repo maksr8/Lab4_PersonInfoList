@@ -28,6 +28,8 @@ namespace Lab4_PersonInfoList.ViewModels
         private Action _toPersonEditAction;
         private MainViewModel _mainViewModel;
         private Person? _selectedPerson;
+        public ICollectionView PersonsView { get; set; }
+        public MainViewModel MainViewModel { get => _mainViewModel; }
         public bool AreChangesSaved
         {
             get => _mainViewModel.AreChangesSaved;
@@ -36,7 +38,6 @@ namespace Lab4_PersonInfoList.ViewModels
                 _mainViewModel.AreChangesSaved = value;
             }
         }
-        public MainViewModel MainViewModel { get => _mainViewModel; }
         public Person? SelectedPerson
         {
             get => _selectedPerson;
@@ -49,19 +50,48 @@ namespace Lab4_PersonInfoList.ViewModels
             }
         }
 
-        private String _filterText;
+        private string _filterText;
 
-        public String FilterText
+        public string FilterText
         {
             get { return _filterText; }
             set
             { 
                 _filterText = value;
                 OnPropertyChanged();
+                FilterData();
+                SortData();
+            }
+        }
+        public List<string> Fields { get; } = ["FirstName", "LastName", "Email", "BirthDate",
+                                               "IsAdult", "SunSign", "ChineseSign", "IsBirthday"];
+
+        private string _selectedField;
+        public string SelectedField
+        {
+            get => _selectedField;
+            set
+            {
+                _selectedField = value;
+                OnPropertyChanged();
+                FilterData();
+                SortData();
             }
         }
 
-        public ICollectionView PersonsView { get; set; }
+
+        private string _sortingOrder;
+        public string SortingOrder
+        {
+            get => _sortingOrder;
+            set
+            {
+                _sortingOrder = value;
+                OnPropertyChanged();
+                SortData();
+            }
+        }
+
 
         public PersonListViewModel(Action toPersonAddAction, Action toPersonEditAction, MainViewModel mainViewModel)
         {
@@ -120,6 +150,16 @@ namespace Lab4_PersonInfoList.ViewModels
         private void DeletePerson()
         {
             _mainViewModel.Persons.Remove(SelectedPerson);
+        }
+
+        private void SortData()
+        {
+            MessageBox.Show("Sort");
+        }
+
+        private void FilterData()
+        {
+            MessageBox.Show("Filter");
         }
 
         public async Task InitializeAsync()
