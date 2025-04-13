@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="Lab4_PersonInfoList.Views.PersonAddView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Lab4_PersonInfoList.Views" xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:vm="clr-namespace:Lab4_PersonInfoList.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="400" IsEnabled="{Binding IsEnabled, Mode=OneWay}">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontFamily="Times New Roman" FontSize="20" Margin="5">Enter your name:</TextBlock>
+            <TextBlock Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontFamily="Times New Roman" FontSize="20" Margin="5">Enter your surname:</TextBlock>
+            <TextBlock Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontFamily="Times New Roman" FontSize="20" Margin="5">Enter your email:</TextBlock>
+            <TextBlock Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontFamily="Times New Roman" FontSize="20" Margin="5">Pick or enter your birth date:</TextBlock>
+
+            <TextBox Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Times New Roman" FontSize="20" Width="300" Margin="5" Text="{Binding FirstName, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBox Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Times New Roman" FontSize="20" Width="300" Margin="5" Text="{Binding LastName, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBox Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Times New Roman" FontSize="20" Width="300" Margin="5" Text="{Binding Email, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <DatePicker Grid.Row="7" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Times New Roman" FontSize="16" Width="200" SelectedDate="{Binding BirthDate, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" Name="BirthDatePicker"></DatePicker>
+
+            <Button Grid.Row="8" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Times New Roman" FontSize="20" Width="300" Margin="5" Command="{Binding ToPersonInfoOutputCommand}">Proceed</Button>
+        </Grid>
+        <!--<fa:ImageAwesome Icon="Refresh" Spin="True" Height="50" Width="50" Visibility="{Binding LoaderVisibility, Mode=OneWay}"></fa:ImageAwesome>-->
+    </Grid>
+</UserControl>
