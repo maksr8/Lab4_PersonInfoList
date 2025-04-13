@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.ComponentModel;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -17,10 +19,24 @@ namespace Lab4_PersonInfoList
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly MainViewModel _viewModel;
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            _viewModel = new MainViewModel();
+            DataContext = _viewModel;
+            Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
+        }
+
+        private async void MainWindow_Closing(object? sender, CancelEventArgs e)
+        {
+            e.Cancel = await _viewModel.CancelClose();
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            await _viewModel.InitializeAsync();
         }
     }
 }

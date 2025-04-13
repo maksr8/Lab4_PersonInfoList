@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using CommunityToolkit.Mvvm.Input;
 using Lab4_PersonInfoList.Managers;
@@ -27,6 +28,15 @@ namespace Lab4_PersonInfoList.ViewModels
         private Action _toPersonEditAction;
         private MainViewModel _mainViewModel;
         private Person? _selectedPerson;
+        public bool AreChangesSaved
+        {
+            get => _mainViewModel.AreChangesSaved;
+            set
+            {
+                _mainViewModel.AreChangesSaved = value;
+            }
+        }
+        public MainViewModel MainViewModel { get => _mainViewModel; }
         public Person? SelectedPerson
         {
             get => _selectedPerson;
@@ -51,7 +61,7 @@ namespace Lab4_PersonInfoList.ViewModels
             }
         }
 
-        public ICollectionView PersonsView { get; }
+        public ICollectionView PersonsView { get; set; }
 
         public PersonListViewModel(Action toPersonAddAction, Action toPersonEditAction, MainViewModel mainViewModel)
         {
@@ -68,14 +78,37 @@ namespace Lab4_PersonInfoList.ViewModels
 
         private async void SavePersonsAsync()
         {
+            await SavePersonsTaskAsync();
+            MessageBox.Show("The changes have been saved.");
+        }
+        private async Task SavePersonsTaskAsync()
+        {
             LoaderManager.Instance.ShowLoader();
             await PersonService.SaveAllPersonsAsync(_mainViewModel.Persons);
+            AreChangesSaved = true;
             LoaderManager.Instance.HideLoader();
         }
 
         private bool CanEditOrDelete()
         {
             return SelectedPerson != null;
+        }
+
+        public async Task<bool> CancelClose()
+        {
+            if(!AreChangesSaved)
+            {
+                var result = MessageBox.Show("You have unsaved changes. Would you like to save them?", "Unsaved Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        await SavePersonsTaskAsync();
+                        break;
+                    case MessageBoxResult.Cancel:
+                        return true;
+                }
+            }
+            return false;
         }
 
         private void EditPerson()
@@ -90,6 +123,7 @@ namespace Lab4_PersonInfoList.ViewModels
         public async Task InitializeAsync()
         {
             _filterText = "";
+            PersonsView = CollectionViewSource.GetDefaultView(_mainViewModel.Persons);
         }
 
         private void OnPropertyChanged([CallerMemberName] string? name = null)

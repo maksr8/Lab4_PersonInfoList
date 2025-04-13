@@ -19,7 +19,7 @@ namespace Lab4_PersonInfoList.Repositories
                 Directory.CreateDirectory(BaseFolder);
         }
 
-        public async Task AddOrUpdateAsync(Person obj)
+        public async Task AddOrUpdateAsync(DBPerson obj)
         {
             string jsonObj = JsonSerializer.Serialize(obj);
 
@@ -29,23 +29,31 @@ namespace Lab4_PersonInfoList.Repositories
             }
         }
 
-        public async Task<List<Person>> GetAllAsync()
+        public async Task<List<DBPerson>> GetAllAsync()
         {
-            var res = new List<Person>();
+            var res = new List<DBPerson>();
 
             foreach (var file in Directory.EnumerateFiles(BaseFolder))
             {
-                await Task.Delay(2000);
+                await Task.Delay(1000);
                 string jsonObj;
                 using (StreamReader sr = new StreamReader(file))
                 {
                     jsonObj = await sr.ReadToEndAsync();
                 }
 
-                res.Add(JsonSerializer.Deserialize<Person>(jsonObj));
+                res.Add(JsonSerializer.Deserialize<DBPerson>(jsonObj));
             }
 
             return res;
+        }
+
+        public void ClearDirectory()
+        {
+            foreach (var file in Directory.GetFiles(BaseFolder))
+            {
+                File.Delete(file);
+            }
         }
     }
 }

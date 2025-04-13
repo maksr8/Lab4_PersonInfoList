@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -11,6 +12,7 @@ using CommunityToolkit.Mvvm.Input;
 using Lab4_PersonInfoList.Managers;
 using Lab4_PersonInfoList.Models;
 using Lab4_PersonInfoList.Navigation;
+using Lab4_PersonInfoList.Services;
 
 namespace Lab4_PersonInfoList.ViewModels
 {
@@ -24,7 +26,18 @@ namespace Lab4_PersonInfoList.ViewModels
         private Visibility _loaderVisibility = Visibility.Collapsed;
 
         private ObservableCollection<Person> _persons;
-        
+        private bool _areChangesSaved;
+
+        public bool AreChangesSaved
+        {
+            get { return _areChangesSaved; }
+            set
+            {
+                _areChangesSaved = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public ObservableCollection<Person> Persons
         {
@@ -69,8 +82,22 @@ namespace Lab4_PersonInfoList.ViewModels
         public MainViewModel()
         {
             LoaderManager.Instance.Initialize(this);
-            Persons = new ObservableCollection<Person>();
+        }
+        public async Task InitializeAsync()
+        {
+            LoaderManager.Instance.ShowLoader();
+            if (Persons != null)
+                Persons.CollectionChanged -= OnPersonsChanged;
+            Persons = new ObservableCollection<Person>(await PersonService.GetAllPersonsAsync());
+            Persons.CollectionChanged += OnPersonsChanged;
+            AreChangesSaved = true;
             NavigateAsync(PersonListNavigationType.PersonList);
+            LoaderManager.Instance.HideLoader();
+        }
+
+        private void OnPersonsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            AreChangesSaved = false;
         }
 
         internal async Task NavigateAsync(PersonListNavigationType type)
@@ -121,6 +148,19 @@ namespace Lab4_PersonInfoList.ViewModels
         public void AddPerson(Person person)
         {
             Persons.Add(person);
+        }
+
+        public async Task<bool> CancelClose()
+        {
+            INavigatable<PersonListNavigationType>? viewModel = _viewModels.FirstOrDefault(vm => vm.ViewModelType == PersonListNavigationType.PersonList);
+            if(viewModel != null)
+            {
+                return await ((PersonListViewModel)viewModel).CancelClose();
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
