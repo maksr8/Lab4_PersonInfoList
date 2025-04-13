@@ -113,6 +113,8 @@ namespace Lab4_PersonInfoList.ViewModels
 
         private void EditPerson()
         {
+            _mainViewModel.SelectedPerson = SelectedPerson;
+            _toPersonEditAction.Invoke();
         }
 
         private void DeletePerson()

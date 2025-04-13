@@ -38,6 +38,7 @@ namespace Lab4_PersonInfoList.ViewModels
             }
         }
 
+        public Person SelectedPerson { get; set; }
 
         public ObservableCollection<Person> Persons
         {
@@ -143,11 +144,6 @@ namespace Lab4_PersonInfoList.ViewModels
         private void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPerson(Person person)
-        {
-            Persons.Add(person);
         }
 
         public async Task<bool> CancelClose()

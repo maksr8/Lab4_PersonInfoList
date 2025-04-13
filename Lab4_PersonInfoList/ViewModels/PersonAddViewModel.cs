@@ -68,11 +68,11 @@ namespace Lab4_PersonInfoList.ViewModels
         private Action _toPersonListAction;
         private MainViewModel _mainViewModel;
 
-        public PersonAddViewModel(Action ToPersonListAction, MainViewModel mainViewModel)
+        public PersonAddViewModel(Action toPersonListAction, MainViewModel mainViewModel)
         {
-            _toPersonListAction = ToPersonListAction;
+            _toPersonListAction = toPersonListAction;
             _mainViewModel = mainViewModel;
-            ToPersonListCommand = new RelayCommand(ToPersonListAction);
+            ToPersonListCommand = new RelayCommand(toPersonListAction);
             AddCommand = new RelayCommand(AddPersonAsync, CanExecute);
         }
 
@@ -82,7 +82,7 @@ namespace Lab4_PersonInfoList.ViewModels
             try
             {
                 Person person = await Task.Run(() => new Person(FirstName, LastName, Email, (DateTime)BirthDate));
-                _mainViewModel.AddPerson(person);
+                _mainViewModel.Persons.Add(person);
             }
             catch (Exception ex)
             {
