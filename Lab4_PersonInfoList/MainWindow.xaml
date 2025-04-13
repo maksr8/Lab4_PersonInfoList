@@ -3,7 +3,8 @@
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-       xmlns:local="clr-namespace:Lab4_PersonInfoList.Views"
+       xmlns:local="clr-namespace:Lab4_PersonInfoList.Views" 
+       xmlns:fa="http://schemas.fontawesome.io/icons/"
        xmlns:vm="clr-namespace:Lab4_PersonInfoList.ViewModels"
        mc:Ignorable="d"
        Title="MainWindow" MinHeight="400" MinWidth="700" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
@@ -20,5 +21,6 @@
    </Window.Resources>
    <Grid>
        <ContentControl Content="{Binding CurrentViewModel}"></ContentControl>
-   </Grid>
+       <fa:ImageAwesome Icon="Refresh" Spin="True" Height="50" Width="50" Visibility="{Binding LoaderVisibility, Mode=OneWay}"></fa:ImageAwesome>
+    </Grid>
 </Window>

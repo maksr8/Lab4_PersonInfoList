@@ -11,6 +11,7 @@ namespace Lab4_PersonInfoList.Models
 {
     class Person
     {
+        public Guid Guid { get; }
         public string FirstName { get; }
         public string LastName { get; }
         public string Email { get; }
@@ -21,9 +22,15 @@ namespace Lab4_PersonInfoList.Models
         public string ChineseSign { get; }
         public bool IsBirthday { get; }
 
+        public Person(string firstName, string lastName, string email, DateTime birthDate, Guid guid) :
+            this(firstName, lastName, email, birthDate)
+        {
+            Guid = guid;
+        }
         public Person(string firstName, string lastName, string email, DateTime birthDate)
         {
             //Thread.Sleep(2000);
+            Guid = Guid.NewGuid();
             FirstName = firstName;
             LastName = lastName;
 
@@ -44,16 +51,8 @@ namespace Lab4_PersonInfoList.Models
 
         private static bool IsEmailValid(string email)
         {
-            return Regex.IsMatch(email, @"^\w+@\w+\.\w+$");
+            return Regex.IsMatch(email, @"^\w+([\.\w+]+)*@\w+[\.\w+]+$");
         }
-
-        public Person(string firstName, string lastName, string email) :
-            this(firstName, lastName, email, DateTime.Now)
-        { }
-
-        public Person(string firstName, string lastName, DateTime birthDate) :
-            this(firstName, lastName, "", birthDate) 
-        { }
 
         private static string GetWesternZodiacSign(DateTime birthDate)
         {

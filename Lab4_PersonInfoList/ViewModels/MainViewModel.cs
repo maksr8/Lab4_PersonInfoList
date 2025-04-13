@@ -1,19 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using CommunityToolkit.Mvvm.Input;
+using Lab4_PersonInfoList.Managers;
+using Lab4_PersonInfoList.Models;
 using Lab4_PersonInfoList.Navigation;
 
 namespace Lab4_PersonInfoList.ViewModels
 {
-    class MainViewModel : INotifyPropertyChanged
+    class MainViewModel : INotifyPropertyChanged, ILoaderOwner
     {
         private List<INavigatable<PersonListNavigationType>> _viewModels = [];
         private INavigatable<PersonListNavigationType> _currentViewModel;
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        private bool _isEnabled = true;
+        private Visibility _loaderVisibility = Visibility.Collapsed;
+
+        private ObservableCollection<Person> _persons;
+        private Person? _selectedPerson;
+
+        public RelayCommand EditCommand { get; }
+        public RelayCommand DeleteCommand { get; }
+        public Person? SelectedPerson
+        {
+            get => _selectedPerson;
+            set
+            {
+                _selectedPerson = value;
+                OnPropertyChanged();
+                EditCommand.NotifyCanExecuteChanged();
+                DeleteCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        public ObservableCollection<Person> Persons
+        {
+            get { return _persons; }
+            set
+            {
+                _persons = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsEnabled
+        {
+            get => _isEnabled;
+            set
+            {
+                _isEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility LoaderVisibility
+        {
+            get => _loaderVisibility;
+            set
+            {
+                _loaderVisibility = value;
+                OnPropertyChanged();
+            }
+        }
 
         public INavigatable<PersonListNavigationType> CurrentViewModel
         {
@@ -27,10 +82,27 @@ namespace Lab4_PersonInfoList.ViewModels
 
         public MainViewModel()
         {
-            Navigate(PersonListNavigationType.PersonList);
+            LoaderManager.Instance.Initialize(this);
+            EditCommand = new RelayCommand(EditPerson, CanEditOrDelete);
+            DeleteCommand = new RelayCommand(DeletePerson, CanEditOrDelete);
+            NavigateAsync(PersonListNavigationType.PersonList);
         }
 
-        internal void Navigate(PersonListNavigationType type)
+        private bool CanEditOrDelete()
+        {
+            return SelectedPerson != null;
+        }
+
+        private void EditPerson()
+        {
+        }
+
+        private void DeletePerson()
+        {
+            Persons.Remove(SelectedPerson);
+        }
+
+        internal async Task NavigateAsync(PersonListNavigationType type)
         {
             if (CurrentViewModel != null && CurrentViewModel.ViewModelType == type)
                 return;
@@ -39,7 +111,9 @@ namespace Lab4_PersonInfoList.ViewModels
             if (viewModel != null)
             {
                 CurrentViewModel = viewModel;
-                CurrentViewModel.IsEnabled = true;
+                LoaderManager.Instance.ShowLoader();
+                await CurrentViewModel.InitializeAsync();
+                LoaderManager.Instance.HideLoader();
             }
         }
 
@@ -52,10 +126,13 @@ namespace Lab4_PersonInfoList.ViewModels
                 switch (type)
                 {
                     case PersonListNavigationType.PersonAdd:
-                        viewModel = new PersonAddViewModel(() => Navigate(PersonListNavigationType.PersonList), this);
+                        viewModel = new PersonAddViewModel(() => NavigateAsync(PersonListNavigationType.PersonList), this);
                         break;
                     case PersonListNavigationType.PersonEdit:
-                        viewModel = new PersonEditViewModel(() => Navigate(PersonListNavigationType.PersonList), this);
+                        viewModel = new PersonEditViewModel(() => NavigateAsync(PersonListNavigationType.PersonList), this);
+                        break;
+                    case PersonListNavigationType.PersonList:
+                        viewModel = new PersonListViewModel(() => NavigateAsync(PersonListNavigationType.PersonAdd), () => NavigateAsync(PersonListNavigationType.PersonEdit), this);
                         break;
                     default:
                         return null;
@@ -68,6 +145,11 @@ namespace Lab4_PersonInfoList.ViewModels
         private void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public void AddPerson(Person person)
+        {
+            Persons.Add(person);
         }
     }
 }

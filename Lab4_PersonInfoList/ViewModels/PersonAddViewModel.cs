@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
+using Lab4_PersonInfoList.Managers;
 using Lab4_PersonInfoList.Models;
 using Lab4_PersonInfoList.Navigation;
 
@@ -17,29 +18,7 @@ namespace Lab4_PersonInfoList.ViewModels
         public PersonListNavigationType ViewModelType => PersonListNavigationType.PersonAdd;
 
         public RelayCommand ToPersonListCommand { get; }
-
-        private bool _isEnabled = true;
-        private Visibility _loaderVisibility = Visibility.Collapsed;
-
-        public bool IsEnabled
-        {
-            get => _isEnabled;
-            set
-            {
-                _isEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility LoaderVisibility
-        {
-            get => _loaderVisibility;
-            set
-            {
-                _loaderVisibility = value;
-                OnPropertyChanged();
-            }
-        }
+        public RelayCommand AddCommand { get; }
 
         private string _firstName = "";
         private string _lastName = "";
@@ -86,38 +65,33 @@ namespace Lab4_PersonInfoList.ViewModels
             }
         }
 
-        private Action _toPersonInfoOutput;
+        private Action _toPersonListAction;
         private MainViewModel _mainViewModel;
 
-        public PersonAddViewModel(Action toPersonInfoOutput, MainViewModel mainViewModel)
+        public PersonAddViewModel(Action ToPersonListAction, MainViewModel mainViewModel)
         {
-            _toPersonInfoOutput = toPersonInfoOutput;
+            _toPersonListAction = ToPersonListAction;
             _mainViewModel = mainViewModel;
-            ToPersonListCommand = new RelayCommand(proceedCheck, CanExecute);
+            ToPersonListCommand = new RelayCommand(ToPersonListAction);
+            AddCommand = new RelayCommand(AddPersonAsync, CanExecute);
         }
 
-        private async void proceedCheck()
+        private async void AddPersonAsync()
         {
-            IsEnabled = false;
-            LoaderVisibility = Visibility.Visible;
-
+            LoaderManager.Instance.ShowLoader();
             try
             {
                 Person person = await Task.Run(() => new Person(FirstName, LastName, Email, (DateTime)BirthDate));
-                //_personListViewModel.Person = person;
+                _mainViewModel.AddPerson(person);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Sign in failed: {ex.Message}");
-                IsEnabled = true;
-                LoaderVisibility = Visibility.Collapsed;
+                MessageBox.Show($"Adding failed: {ex.Message}");
+                LoaderManager.Instance.HideLoader();
                 return;
             }
-            _toPersonInfoOutput?.Invoke();
-
-
-            LoaderVisibility = Visibility.Collapsed;
-            
+            _toPersonListAction?.Invoke();
+            LoaderManager.Instance.HideLoader();
         }
 
         private bool CanExecute()
@@ -130,6 +104,10 @@ namespace Lab4_PersonInfoList.ViewModels
         private void UpdateCanExecute()
         {
             ToPersonListCommand.NotifyCanExecuteChanged();
+        }
+        public async Task InitializeAsync()
+        {
+            
         }
 
         #region INotifyPropertyChanged

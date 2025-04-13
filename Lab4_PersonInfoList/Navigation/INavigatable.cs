@@ -16,6 +16,8 @@ namespace Lab4_PersonInfoList.Navigation
     interface INavigatable<TEnum> where TEnum : Enum
     {
         public TEnum ViewModelType { get; }
-        public bool IsEnabled { get; set; }
+
+        Task InitializeAsync();
+
     }
 }
