@@ -8,11 +8,11 @@ using Lab4_PersonInfoList.Repositories;
 
 namespace Lab4_PersonInfoList.Services
 {
-    class PersonService
+    static class PersonService
     {
         private static FileRepository Repository = new FileRepository();
 
-        public async Task<List<Person>> GetAllPersonsAsync()
+        public static async Task<List<Person>> GetAllPersonsAsync()
         {
             var res = new List<Person>();
 
@@ -23,7 +23,7 @@ namespace Lab4_PersonInfoList.Services
             return res;
         }
 
-        public async Task SaveAllPersonsAsync(IEnumerable<Person> persons)
+        public static async Task SaveAllPersonsAsync(IEnumerable<Person> persons)
         {
             foreach (var person in persons)
             {

@@ -103,7 +103,7 @@ namespace Lab4_PersonInfoList.ViewModels
         }
         private void UpdateCanExecute()
         {
-            ToPersonListCommand.NotifyCanExecuteChanged();
+            AddCommand.NotifyCanExecuteChanged();
         }
         public async Task InitializeAsync()
         {

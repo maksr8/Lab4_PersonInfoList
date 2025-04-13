@@ -20,7 +20,7 @@
        </DataTemplate>
    </Window.Resources>
    <Grid>
-       <ContentControl Content="{Binding CurrentViewModel}"></ContentControl>
+       <ContentControl Content="{Binding CurrentViewModel}" IsEnabled="{Binding IsEnabled, Mode=OneWay}"></ContentControl>
        <fa:ImageAwesome Icon="Refresh" Spin="True" Height="50" Width="50" Visibility="{Binding LoaderVisibility, Mode=OneWay}"></fa:ImageAwesome>
     </Grid>
 </Window>

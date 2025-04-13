@@ -24,21 +24,7 @@ namespace Lab4_PersonInfoList.ViewModels
         private Visibility _loaderVisibility = Visibility.Collapsed;
 
         private ObservableCollection<Person> _persons;
-        private Person? _selectedPerson;
-
-        public RelayCommand EditCommand { get; }
-        public RelayCommand DeleteCommand { get; }
-        public Person? SelectedPerson
-        {
-            get => _selectedPerson;
-            set
-            {
-                _selectedPerson = value;
-                OnPropertyChanged();
-                EditCommand.NotifyCanExecuteChanged();
-                DeleteCommand.NotifyCanExecuteChanged();
-            }
-        }
+        
 
         public ObservableCollection<Person> Persons
         {
@@ -46,7 +32,7 @@ namespace Lab4_PersonInfoList.ViewModels
             set
             {
                 _persons = value;
-                OnPropertyChanged();
+                OnPropertyChanged(); //try to remove
             }
         }
 
@@ -83,23 +69,8 @@ namespace Lab4_PersonInfoList.ViewModels
         public MainViewModel()
         {
             LoaderManager.Instance.Initialize(this);
-            EditCommand = new RelayCommand(EditPerson, CanEditOrDelete);
-            DeleteCommand = new RelayCommand(DeletePerson, CanEditOrDelete);
+            Persons = new ObservableCollection<Person>();
             NavigateAsync(PersonListNavigationType.PersonList);
-        }
-
-        private bool CanEditOrDelete()
-        {
-            return SelectedPerson != null;
-        }
-
-        private void EditPerson()
-        {
-        }
-
-        private void DeletePerson()
-        {
-            Persons.Remove(SelectedPerson);
         }
 
         internal async Task NavigateAsync(PersonListNavigationType type)
