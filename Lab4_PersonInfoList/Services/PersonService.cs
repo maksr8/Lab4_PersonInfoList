@@ -26,7 +26,8 @@ namespace Lab4_PersonInfoList.Services
 
         public static async Task SaveAllPersonsAsync(IEnumerable<Person> persons)
         {
-            Repository.ClearDirectory();
+            await Task.Delay(1000);
+            await Repository.ClearDirectoryAsync();
             foreach (var person in persons)
             {
                 await Repository.AddOrUpdateAsync(person.ConvertToDBPerson());

@@ -11,7 +11,7 @@ namespace Lab4_PersonInfoList.Repositories
 {
     internal class FileRepository
     {
-        private static readonly string BaseFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Lab4_CSharp_PersonInfoList");
+        internal static readonly string BaseFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Lab4_CSharp_PersonInfoList");
 
         public FileRepository()
         {
@@ -35,7 +35,7 @@ namespace Lab4_PersonInfoList.Repositories
 
             foreach (var file in Directory.EnumerateFiles(BaseFolder))
             {
-                await Task.Delay(500);
+                await Task.Delay(300);
                 string jsonObj;
                 using (StreamReader sr = new StreamReader(file))
                 {
@@ -48,11 +48,11 @@ namespace Lab4_PersonInfoList.Repositories
             return res;
         }
 
-        public void ClearDirectory()
+        public async Task ClearDirectoryAsync()
         {
             foreach (var file in Directory.GetFiles(BaseFolder))
             {
-                File.Delete(file);
+                await Task.Run(() => File.Delete(file));
             }
         }
     }

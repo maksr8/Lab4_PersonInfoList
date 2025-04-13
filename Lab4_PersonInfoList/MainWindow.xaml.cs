@@ -29,9 +29,9 @@ namespace Lab4_PersonInfoList
             Closing += MainWindow_Closing;
         }
 
-        private async void MainWindow_Closing(object? sender, CancelEventArgs e)
+        private void MainWindow_Closing(object? sender, CancelEventArgs e)
         {
-            e.Cancel = await _viewModel.CancelClose();
+            e.Cancel = Task.Run(() => _viewModel.CancelClose()).GetAwaiter().GetResult();
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
