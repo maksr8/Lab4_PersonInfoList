@@ -35,7 +35,7 @@ namespace Lab4_PersonInfoList.Repositories
 
             foreach (var file in Directory.EnumerateFiles(BaseFolder))
             {
-                await Task.Delay(300);
+                //await Task.Delay(100);
                 string jsonObj;
                 using (StreamReader sr = new StreamReader(file))
                 {

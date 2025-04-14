@@ -6,9 +6,11 @@
              xmlns:local="clr-namespace:Lab4_PersonInfoList.Views"
              xmlns:helpers="clr-namespace:Lab4_PersonInfoList.Helpers"
              mc:Ignorable="d" 
-             d:DesignHeight="720" d:DesignWidth="1280">
+             d:DesignHeight="720" d:DesignWidth="1280"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib" >
     <UserControl.Resources>
         <helpers:BooleanToStringSavedConverter x:Key="BooleanToStringSavedConverter" />
+        <helpers:YesNoToBooleanConverter x:Key="YesNoToBooleanConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -20,10 +22,10 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Times New Roman" FontSize="20" Width="Auto" Height="29" Margin="5">Filter and sort:</TextBlock>
             <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Times New Roman" FontSize="20" Width="300" Height="29" Margin="5" Text="{Binding FilterText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-            <ComboBox ItemsSource="{Binding Fields}" SelectedValue="{Binding SelectedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Times New Roman" FontSize="20" Width="200" Height="29" Margin="5" VerticalAlignment="Center"></ComboBox>
-            <ComboBox SelectedValue="{Binding SortingOrder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Times New Roman" FontSize="20" Width="200" Height="29" Margin="5" VerticalAlignment="Center">
-                <ComboBoxItem>Ascending</ComboBoxItem>
-                <ComboBoxItem>Descending</ComboBoxItem>
+            <ComboBox ItemsSource="{Binding Fields}" SelectedValue="{Binding SelectedField, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" FontFamily="Times New Roman" FontSize="20" Width="200" Height="29" Margin="5" VerticalAlignment="Center"></ComboBox>
+            <ComboBox SelectedValue="{Binding SortingOrder, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" FontFamily="Times New Roman" FontSize="20" Width="200" Height="29" Margin="5" VerticalAlignment="Center">
+                <sys:String>Ascending</sys:String>
+                <sys:String>Descending</sys:String>
             </ComboBox>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Times New Roman" FontSize="20" Width="Auto" Height="29" Margin="5" Text="{Binding MainViewModel.AreChangesSaved, Mode=OneWay, Converter={StaticResource BooleanToStringSavedConverter}}"></TextBlock>
         </StackPanel>

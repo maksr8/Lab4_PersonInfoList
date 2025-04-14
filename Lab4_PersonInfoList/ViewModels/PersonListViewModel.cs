@@ -28,7 +28,6 @@ namespace Lab4_PersonInfoList.ViewModels
         private Action _toPersonEditAction;
         private MainViewModel _mainViewModel;
         private Person? _selectedPerson;
-        public ICollectionView PersonsView { get; set; }
         public MainViewModel MainViewModel { get => _mainViewModel; }
         public bool AreChangesSaved
         {
@@ -50,6 +49,17 @@ namespace Lab4_PersonInfoList.ViewModels
             }
         }
 
+        private ICollectionView _personsView;
+        public ICollectionView PersonsView
+        {
+            get => _personsView;
+            set
+            {
+                _personsView = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _filterText;
 
         public string FilterText
@@ -59,8 +69,7 @@ namespace Lab4_PersonInfoList.ViewModels
             { 
                 _filterText = value;
                 OnPropertyChanged();
-                FilterData();
-                SortData();
+                FilterAndSortData();
             }
         }
         public List<string> Fields { get; } = ["FirstName", "LastName", "Email", "BirthDate",
@@ -74,8 +83,7 @@ namespace Lab4_PersonInfoList.ViewModels
             {
                 _selectedField = value;
                 OnPropertyChanged();
-                FilterData();
-                SortData();
+                FilterAndSortData();
             }
         }
 
@@ -88,7 +96,7 @@ namespace Lab4_PersonInfoList.ViewModels
             {
                 _sortingOrder = value;
                 OnPropertyChanged();
-                SortData();
+                FilterAndSortData();
             }
         }
 
@@ -150,21 +158,34 @@ namespace Lab4_PersonInfoList.ViewModels
         private void DeletePerson()
         {
             _mainViewModel.Persons.Remove(SelectedPerson);
+            FilterAndSortData();
         }
 
-        private void SortData()
+        private void FilterAndSortData()
         {
-            MessageBox.Show("Sort");
-        }
-
-        private void FilterData()
-        {
-            MessageBox.Show("Filter");
+            var query = _mainViewModel.Persons.AsEnumerable();
+            if (!string.IsNullOrEmpty(FilterText) && !string.IsNullOrEmpty(SelectedField))
+            {
+                var property = typeof(Person).GetProperty(SelectedField);
+                query = query.Where(p =>
+                {
+                    var value = property.GetValue(p).ToString();
+                    return value.Contains(FilterText);
+                });
+            }
+            if (!string.IsNullOrEmpty(SelectedField) && !string.IsNullOrEmpty(SortingOrder))
+            {
+                var property = typeof(Person).GetProperty(SelectedField);
+                query = SortingOrder == "Ascending" ? query.OrderBy(p => property.GetValue(p)) : query.OrderByDescending(p => property.GetValue(p));
+            }
+            PersonsView = CollectionViewSource.GetDefaultView(query.ToList());
         }
 
         public async Task InitializeAsync()
         {
             _filterText = "";
+            SelectedField = "";
+            SortingOrder = "";
             PersonsView = CollectionViewSource.GetDefaultView(_mainViewModel.Persons);
         }
 
